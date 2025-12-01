@@ -1,11 +1,10 @@
 import Environment as env
 import Creation
-
+import ArcConsistency as AC
 
 #testing
 game = env.sudoku()
 Creation.generateRandom(game)
 game.printBoard()
-game.addNum(0,0,7)
-print(Creation.validateInput(game))
+AC.AC3(game)
 game.printBoard()

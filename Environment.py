@@ -33,6 +33,20 @@ class sudoku ():
                 if self.board[r][c] ==0:
                     return r,c
     
+    def getAllUnassigned(self):
+        """
+        Get all values not assigned
+        from left to right
+        up to down
+        """
+        unassigned = set()
+        for r in range (N):
+            for c in range (N):
+                if self.board[r][c] ==0:
+                    unassigned.add((r,c))
+                
+        return unassigned
+    
     def getBoard(self):
         return self.board
     
