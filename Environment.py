@@ -11,9 +11,22 @@ class sudoku ():
         self.board = [[0 for _ in range(N)] for _ in range(N)]
 
     #Testing purposes
+    # def printBoard(self):
+    #     for row in self.board:
+    #         print(*row)
+    
     def printBoard(self):
-        for row in self.board:
-            print(*row)
+        for r in range(9):
+           if r % 3 == 0 and r != 0:
+            print("-" * 21)   
+
+           row_str = ""
+           for c in range(9):
+              if c % 3 == 0 and c != 0:
+                row_str += "| "  
+
+              row_str += str(self.board[r][c]) + " "
+           print(row_str)
 
     def isFilled(self):
         for r in range (N):
@@ -32,6 +45,20 @@ class sudoku ():
             for c in range (N):
                 if self.board[r][c] ==0:
                     return r,c
+    
+    def getAllUnassigned(self):
+        """
+        Get all values not assigned
+        from left to right
+        up to down
+        """
+        unassigned = set()
+        for r in range (N):
+            for c in range (N):
+                if self.board[r][c] ==0:
+                    unassigned.add((r,c))
+                
+        return unassigned
     
     def getBoard(self):
         return self.board
