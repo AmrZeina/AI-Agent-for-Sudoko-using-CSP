@@ -79,3 +79,12 @@ class sudoku ():
     
     def addNum(self, row, col, value):
         self.board[row][col] = value
+
+class TreeNode:
+    def __init__(self, label, failed=False):
+        self.label = label
+        self.failed = failed #For coloring
+        self.children = []
+
+    def add_child(self, node):
+        self.children.append(node)

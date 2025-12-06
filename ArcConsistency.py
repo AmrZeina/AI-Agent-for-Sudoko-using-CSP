@@ -62,6 +62,7 @@ def queueArcs(unassigned_cells):
     
 def revise(Xi, Xj, D):
     revised = False
+    pruned = 0
 
     domainXi = D[Xi]
     domainXj = D[Xj]
@@ -83,12 +84,13 @@ def revise(Xi, Xj, D):
             #Remove val from Xi's domain
             domainXi.remove(val)
             revised = True
+            pruned += 1
 
             print(f"Removed value {val} from {Xi} because no supporting value exists in {Xj}")
 
     print(f"Updated domain of {Xi}: {sorted(list(domainXi))}")
     print("-" * 40)
-    return revised
+    return revised, pruned
     
 
 def AC3(csp):
@@ -96,15 +98,34 @@ def AC3(csp):
     domains = initializeDomain(csp)
     ArcQ = queueArcs(unassigned_cells)
 
+    revision = 0
+    pruning = 0
+
+    #Tree Creation
+    root = env.TreeNode(("START", None))
+    last_node = root
+
     while ArcQ:
         Xi, Xj = ArcQ.popleft()
-        if revise(Xi, Xj, domains):
+
+        # Building AC tree structure
+        arc_node = env.TreeNode((Xi, Xj))
+        last_node.add_child(arc_node)
+
+        revised, pruned = revise(Xi, Xj, domains)
+        revision += 1
+
+        if revised:
+            pruning += pruned
             if len(domains[Xi]) == 0:
                 print(f"Inconsistent! Empty domain for {Xi}")
-                return False
+                arc_node.failed = True
+                return False, root, revision, pruning
 
             for neighbour in get_neighbours(Xi):
                 if neighbour != Xj:
+                    child = env.TreeNode((neighbour, Xi))
+                    arc_node.add_child(child)
                     ArcQ.append((neighbour, Xi))
     
-    return True
+    return True, root, revision, pruning
