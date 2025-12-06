@@ -101,17 +101,8 @@ def AC3(csp):
     revision = 0
     pruning = 0
 
-    #Tree Creation
-    root = env.TreeNode(("START", None))
-    last_node = root
-
     while ArcQ:
         Xi, Xj = ArcQ.popleft()
-
-        # Building AC tree structure
-        arc_node = env.TreeNode((Xi, Xj))
-        last_node.add_child(arc_node)
-
         revised, pruned = revise(Xi, Xj, domains)
         revision += 1
 
@@ -119,13 +110,10 @@ def AC3(csp):
             pruning += pruned
             if len(domains[Xi]) == 0:
                 print(f"Inconsistent! Empty domain for {Xi}")
-                arc_node.failed = True
-                return False, root, revision, pruning
+                return False, revision, pruning
 
             for neighbour in get_neighbours(Xi):
                 if neighbour != Xj:
-                    child = env.TreeNode((neighbour, Xi))
-                    arc_node.add_child(child)
                     ArcQ.append((neighbour, Xi))
     
-    return True, root, revision, pruning
+    return True, revision, pruning

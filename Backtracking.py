@@ -1,10 +1,10 @@
 import Environment as env
 import random
 
-def backtrackingSearch(csp, Randomize = False):
-    return backtracking(csp, csp, Randomize)
+def backtrackingSearch(csp, root = None, Randomize = False):
+    return backtracking(csp, csp, Randomize, root)
 
-def backtracking(assignment, csp, Randomize):
+def backtracking(assignment, csp, Randomize, root = None):
     #1- Valid sudoku
     if assignment.isFilled():
         return assignment
@@ -33,12 +33,22 @@ def backtracking(assignment, csp, Randomize):
     #4- Try all domain values
     for val in domain:
         assignment.addNum(rowIndex, colIndex, val)
+        if root is not None:
+            node = env.TreeNode(((rowIndex,colIndex) , val))
+            root.add_child(node)
+            result = backtracking(assignment, csp, Randomize, node)
 
-        result = backtracking(assignment, csp, Randomize)
+        else : 
+            result = backtracking(assignment, csp, Randomize)
+
         if result is not None:
             return result
 
         #Undo assignment
         assignment.addNum(rowIndex, colIndex, 0)
+        #Remove all children and detect failure
+        if root is not None:
+            node.remove_children()
+            node.detect_fail()
 
     return None

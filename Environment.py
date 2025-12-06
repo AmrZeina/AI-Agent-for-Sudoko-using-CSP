@@ -88,3 +88,9 @@ class TreeNode:
 
     def add_child(self, node):
         self.children.append(node)
+    
+    def remove_children(self):
+        self.children.clear()
+
+    def detect_fail(self):
+        self.failed = True

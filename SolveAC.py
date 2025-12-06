@@ -1,13 +1,8 @@
 import Environment as env
 import copy
 import ArcConsistency as ac  
-import ACTree as tree 
 
-def draw_tree(root):
-    graph = tree.draw_tree(root)
-    graph.render("ac3_tree", format="pdf", cleanup=True)
-
-def enforceArcConsistency(csp):
+def enforceArcConsistency(csp, root):
     """
     This function:
     - Runs AC-3
@@ -25,7 +20,7 @@ def enforceArcConsistency(csp):
         # Make a copy to detect changes
         old_domains = copy.deepcopy(domains)
         # Run AC3 with logging
-        success, root, revised, pruned = ac.AC3(csp)
+        success, revised, pruned = ac.AC3(csp)
         revision+=revised
         pruning += pruned
         if not success:
@@ -40,6 +35,8 @@ def enforceArcConsistency(csp):
                     val = next(iter(domains[(r, c)]))
                     if csp.board[r][c] == 0:
                         print(f"Assigning X({r},{c}) = {val} because its domain is singleton.")
+                        assigned_node = env.TreeNode(((r,c), val))
+                        root.add_child(assigned_node)
                         csp.addNum(r, c, val)
                         updated = True
 
@@ -49,11 +46,9 @@ def enforceArcConsistency(csp):
         # Step 4: If board solved → finish
         if csp.isFilled():
             print("\nBoard solved by repeated Arc Consistency!\n")
-            draw_tree(root)
             return True,  revision, pruning
 
         # Step 5: Stop when domains no longer change
         if old_domains == domains and not updated:
             print("\nNo more domain changes detected. Arc consistency complete.\n")
-            draw_tree(root)
             return True,  revision, pruning
